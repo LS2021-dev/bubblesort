@@ -1,0 +1,16 @@
+name: bubblesort
+version: '${project.version}'
+main: org.ferargent.bubblesort.Bubblesort
+api-version: '1.20'
+commands:
+  random:
+    description: Creates random array
+    permission: op
+
+  spawn:
+    description: Spawns
+    permission: op
+
+  start:
+    description: Sorts the array
+    permission: op
