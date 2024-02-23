@@ -12,7 +12,7 @@ public final class Bubblesort extends JavaPlugin {
     public static int[] createRandomNumbers(int length) {
         int[] list = new int[length];
         for (int i = 0; i < length; i++) {
-            list[i] = (int) (Math.random() * 100);
+            list[i] = (int) (Math.random() * 10+1);
         }
         return list;
     }
