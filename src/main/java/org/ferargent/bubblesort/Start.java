@@ -27,72 +27,71 @@ public class Start implements CommandExecutor {
         // Bubble sort
 
         new BukkitRunnable() {
-            int i = 0;
-            int j = 0;
-            boolean select = true;
+            int bubblePhase = 1;
+            int selectedIndex = 0;
+            boolean selected = true;
 
             @Override
             public void run() {
-                if (i < array.length - 1) {
+                // Wenn die Säulen noch nicht aufsteigend sortiert sind, ...
+                if (!isSorted(array) || selectedIndex != 0) {
                     // Alle Säulen werden zu Diamantblöcken geändert
-                    for (int k = 0; k < array.length; k++) {
-                        for (int l = 0; l < array[k]; l++) {
-                            world.getBlockAt(startingLocation.clone().add(k, l, 0)).setType(Material.DIAMOND_BLOCK);
+                    for (int block_x = 0; block_x < array.length; block_x++) {
+                        for (int block_y = 0; block_y < array[block_x]; block_y++) {
+                            world.getBlockAt(startingLocation.clone().add(block_x, block_y, 0)).setType(Material.DIAMOND_BLOCK);
                         }
                     }
-                    if (j != array.length - 1) {
-                        // Die linke der ausgewählten Säulen wird zu Redstone-Blöcken geändert
-                        for (int k = 0; k < array[j]; k++) {
-                            world.getBlockAt(startingLocation.clone().add(j, k, 0)).setType(Material.REDSTONE_BLOCK);
+                    // Wenn nicht die letzte Säule ausgewählt ist, ...
+                    if (selectedIndex != array.length - 1) {
+                        // Die linke der beiden ausgewählten Säulen wird zu Redstone-Blöcken geändert
+                        for (int k = 0; k < array[selectedIndex]; k++) {
+                            world.getBlockAt(startingLocation.clone().add(selectedIndex, k, 0)).setType(Material.REDSTONE_BLOCK);
                         }
-                        // Die rechte der ausgewählten Säulen wird zu Redstone-Blöcken geändert
-                        for (int k = 0; k < array[j + 1]; k++) {
-                            world.getBlockAt(startingLocation.clone().add(j + 1, k, 0)).setType(Material.REDSTONE_BLOCK);
+                        // Die rechte der beiden ausgewählten Säulen wird zu Redstone-Blöcken geändert
+                        for (int k = 0; k < array[selectedIndex + 1]; k++) {
+                            world.getBlockAt(startingLocation.clone().add(selectedIndex + 1, k, 0)).setType(Material.REDSTONE_BLOCK);
                         }
                     }
                     // Wenn das Array noch nicht vollständig durchlaufen worden ist, ...
-                    if (j < array.length - i - 1) {
+                    // if (j < array.length - i - 1) {
+                    if (selectedIndex < array.length - 1) {
                         // Wenn die linke Säule höher ist als die rechte, ...
-                        if (array[j] > array[j + 1]) {
-
-                            for (int k = 0; k < array[j]; k++) {
-                                world.getBlockAt(startingLocation.clone().add(j, k, 0)).setType(Material.AIR);
-                            }
-                            for (int k = 0; k < array[j + 1]; k++) {
-                                world.getBlockAt(startingLocation.clone().add(j + 1, k, 0)).setType(Material.AIR);
-                            }
-                            int temp = array[j];
-                            array[j] = array[j + 1];
-                            array[j + 1] = temp;
-                            if (!(j == array.length - 1)) {
-                                for (int k = 0; k < array[j + 1]; k++) {
-                                    world.getBlockAt(startingLocation.clone().add(j + 1, k, 0)).setType(Material.REDSTONE_BLOCK);
+                        if (array[selectedIndex] > array[selectedIndex + 1]) {
+                            // Wenn nicht ausgewählt wird, tausche die beiden Säulen
+                            if (!selected){
+                                for (int k = 0; k < array[selectedIndex]; k++) {
+                                    world.getBlockAt(startingLocation.clone().add(selectedIndex, k, 0)).setType(Material.AIR);
                                 }
+                                for (int k = 0; k < array[selectedIndex + 1]; k++) {
+                                    world.getBlockAt(startingLocation.clone().add(selectedIndex + 1, k, 0)).setType(Material.AIR);
+                                }
+                                int temp = array[selectedIndex];
+                                array[selectedIndex] = array[selectedIndex + 1];
+                                array[selectedIndex + 1] = temp;
+                                if (!(selectedIndex == array.length - 1)) {
+                                    for (int k = 0; k < array[selectedIndex + 1]; k++) {
+                                        world.getBlockAt(startingLocation.clone().add(selectedIndex + 1, k, 0)).setType(Material.REDSTONE_BLOCK);
+                                    }
 
-                                for (int k = 0; k < array[j]; k++) {
-                                    world.getBlockAt(startingLocation.clone().add(j, k, 0)).setType(Material.REDSTONE_BLOCK);
+                                    for (int k = 0; k < array[selectedIndex]; k++) {
+                                        world.getBlockAt(startingLocation.clone().add(selectedIndex, k, 0)).setType(Material.REDSTONE_BLOCK);
+                                    }
                                 }
                             }
                         }
-                        if (select) {
-                            select = false;
-                        } else {
-                            j++;
-                            select = true;
+                        // Wähle nächstes Säulen-Paar aus
+                        if (!selected){
+                            selectedIndex++;
                         }
-
                     } else {
-                        if (select) {
-                            select = false;
-                        } else {
-                            j = 0;
-                            i++;
-                            select = true;
+                        if (!selected){
+                            selectedIndex = 0;
+                            bubblePhase++;
                         }
                     }
-                } else {
-                    // Fertig sortiert
-                    for (int k = 0; k < array.length; k++) {
+                    selected = !selected;
+                } else { // Wenn das Sortieren beendet ist
+                    for (int k = 0; k < array.length; k++) { // Wandle alle Säulen in Diamant-Blöcke um
                         for (int l = 0; l < array[k]; l++) {
                             world.getBlockAt(startingLocation.clone().add(k, l, 0)).setType(Material.DIAMOND_BLOCK);
                         }
@@ -100,8 +99,18 @@ public class Start implements CommandExecutor {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(Bubblesort.getPlugin(Bubblesort.class), 20L, 20L);
+        }.runTaskTimer(Bubblesort.getPlugin(Bubblesort.class), 5L, 5L);
 
         return false;
     }
+
+    private boolean isSorted(int[] array){
+        for (int i = 0; i < array.length - 1; i++){
+            if (array[i] > array[i+1]){
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
