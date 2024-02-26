@@ -27,7 +27,6 @@ public class Start implements CommandExecutor {
         // Bubble sort
 
         new BukkitRunnable() {
-            int bubblePhase = 1;
             int selectedIndex = 0;
             boolean selected = true;
 
@@ -38,7 +37,7 @@ public class Start implements CommandExecutor {
                     // Alle Säulen werden zu Diamantblöcken geändert
                     for (int block_x = 0; block_x < array.length; block_x++) {
                         for (int block_y = 0; block_y < array[block_x]; block_y++) {
-                            world.getBlockAt(startingLocation.clone().add(block_x, block_y, 0)).setType(Material.DIAMOND_BLOCK);
+                            world.getBlockAt(startingLocation.clone().add(block_x, block_y, 0)).setType(Material.IRON_BLOCK);
                         }
                     }
                     // Wenn nicht die letzte Säule ausgewählt ist, ...
@@ -49,7 +48,7 @@ public class Start implements CommandExecutor {
                         }
                         // Die rechte der beiden ausgewählten Säulen wird zu Redstone-Blöcken geändert
                         for (int k = 0; k < array[selectedIndex + 1]; k++) {
-                            world.getBlockAt(startingLocation.clone().add(selectedIndex + 1, k, 0)).setType(Material.REDSTONE_BLOCK);
+                            world.getBlockAt(startingLocation.clone().add(selectedIndex + 1, k, 0)).setType(Material.EMERALD_BLOCK);
                         }
                     }
                     // Wenn das Array noch nicht vollständig durchlaufen worden ist, ...
@@ -70,7 +69,7 @@ public class Start implements CommandExecutor {
                                 array[selectedIndex + 1] = temp;
                                 if (!(selectedIndex == array.length - 1)) {
                                     for (int k = 0; k < array[selectedIndex + 1]; k++) {
-                                        world.getBlockAt(startingLocation.clone().add(selectedIndex + 1, k, 0)).setType(Material.REDSTONE_BLOCK);
+                                        world.getBlockAt(startingLocation.clone().add(selectedIndex + 1, k, 0)).setType(Material.EMERALD_BLOCK);
                                     }
 
                                     for (int k = 0; k < array[selectedIndex]; k++) {
@@ -86,7 +85,6 @@ public class Start implements CommandExecutor {
                     } else {
                         if (!selected){
                             selectedIndex = 0;
-                            bubblePhase++;
                         }
                     }
                     selected = !selected;
